@@ -1,6 +1,6 @@
+from typing import Tuple, List
+
 import numpy as np
-from typing import Tuple
-from regression import util
 
 
 def compute_cost(x: np.ndarray, y: np.ndarray, w: np.ndarray, b: float) -> float:
@@ -17,7 +17,7 @@ def compute_cost(x: np.ndarray, y: np.ndarray, w: np.ndarray, b: float) -> float
     """
     f_w_b: np.ndarray = np.dot(x, w) + b  # it contains w.x + b for all m examples
     error = f_w_b - y  # errors for all m examples
-    return np.sum(np.dot(error, error)) / (2 * x.shape[0])  # x.shape[0] is m
+    return np.dot(error, error) / (2 * x.shape[0])  # x.shape[0] is m
 
 
 def compute_gradient(x: np.ndarray, y: np.ndarray, w: np.ndarray, b: float) -> Tuple[np.ndarray, float]:
@@ -46,8 +46,7 @@ def compute_gradient(x: np.ndarray, y: np.ndarray, w: np.ndarray, b: float) -> T
 
 
 def gradient_descent(x: np.ndarray, y: np.ndarray, w_in: np.ndarray, b_in, alpha: float, num_iters: int,
-                     change_thr: float = 1.e-7)\
-        -> Tuple[np.ndarray, float]:
+                     with_history: bool = False) -> Tuple[np.ndarray, float, np.ndarray]:
     """
     Performs batch gradient descent to learn theta. Updates theta by taking
     num_iters gradient steps with learning rate alpha
@@ -59,30 +58,22 @@ def gradient_descent(x: np.ndarray, y: np.ndarray, w_in: np.ndarray, b_in, alpha
       b_in (scalar)       : initial model parameter
       alpha (float)       : Learning rate
       num_iters (int)     : number of iterations to run gradient descent
-      change_thr (float)  : if relative change between two consecutive costs is less than change_thr, then return
+      with_history(bool)  : if True, then returns the const history as well
     Returns:
       w (ndarray (n,)) : Updated values of parameters
       b (scalar)       : Updated value of parameter
+      cost(ndarray (n,): cost history if @with_history is True, else an empty array. False by default
       """
     w = w_in
     b = b_in
+    cost_history: List[float] = []
 
-    dj_dw, dj_db = compute_gradient(x, y, w, b)
-    w = w - alpha * dj_dw
-    b = b - alpha * dj_db
-    old_cost, new_cost = 0, compute_cost(x, y, w, b)
-
-    for i in range(num_iters-1):
-        old_cost = new_cost
-
-        # actual calculation
+    for i in range(num_iters):
         dj_dw, dj_db = compute_gradient(x, y, w, b)
         w = w - alpha * dj_dw
         b = b - alpha * dj_db
-        new_cost = compute_cost(x, y, w, b)
 
-        rel_change = util.rel_change(new_cost, old_cost)
-        if abs(rel_change) <= change_thr:
-            return w, b
+        if cost_history:
+            cost_history.append(compute_cost(x, y, w, b))
 
-    return w, b
+    return w, b, np.array(cost_history)

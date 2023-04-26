@@ -1,4 +1,3 @@
-import math
 import unittest
 
 import numpy as np
@@ -45,7 +44,7 @@ class LinearRegressionTest(unittest.TestCase):
         initial_b = 0.
         iterations = 100_000  # course uses 1000 iterations, but changed it to get better calculations
         alpha = 5.0e-7
-        w_final, b_final = lr.gradient_descent(x, y, initial_w, initial_b, alpha, iterations)
+        w_final, b_final, _ = lr.gradient_descent(x, y, initial_w, initial_b, alpha, iterations)
         npt.assert_almost_equal(w_final, [0.24224154, 0.28821169, -0.85520022, -1.57622854])
         self.assertAlmostEqual(b_final, -0.04168502)
         self.assertAlmostEqual(lr.compute_cost(x, y, w_final, b_final), 563.25375720)
