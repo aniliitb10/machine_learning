@@ -60,13 +60,13 @@ def gradient_descent(x: np.ndarray, y: np.ndarray, w_in: np.ndarray, b_in, alpha
       num_iters (int)     : number of iterations to run gradient descent
       with_history(bool)  : if True, then returns the const history as well
     Returns:
-      w (ndarray (n,)) : Updated values of parameters
-      b (scalar)       : Updated value of parameter
-      cost(ndarray (n,): cost history if @with_history is True, else an empty array. False by default
+      w (ndarray (n,))   : Updated values of parameters
+      b (scalar)         : Updated value of parameter
+      cost(ndarray (n, 3): List of tuple of w,b and cost if @with_history is True, else an empty array. False by default
       """
     w = w_in
     b = b_in
-    cost_history: List[float] = []
+    cost_history: List[Tuple[float, float, float]] = []
 
     for i in range(num_iters):
         dj_dw, dj_db = compute_gradient(x, y, w, b)
@@ -74,6 +74,6 @@ def gradient_descent(x: np.ndarray, y: np.ndarray, w_in: np.ndarray, b_in, alpha
         b = b - alpha * dj_db
 
         if cost_history:
-            cost_history.append(compute_cost(x, y, w, b))
+            cost_history.append((w, b, compute_cost(x, y, w, b)))
 
     return w, b, np.array(cost_history)
