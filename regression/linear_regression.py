@@ -66,14 +66,14 @@ def gradient_descent(x: np.ndarray, y: np.ndarray, w_in: np.ndarray, b_in, alpha
       """
     w = w_in
     b = b_in
-    cost_history: List[Tuple[float, float, float]] = []
+    cost_history: List[float] = []
 
     for i in range(num_iters):
         dj_dw, dj_db = compute_gradient(x, y, w, b)
         w = w - alpha * dj_dw
         b = b - alpha * dj_db
 
-        if cost_history:
-            cost_history.append((w, b, compute_cost(x, y, w, b)))
+        if with_history:
+            cost_history.append(compute_cost(x, y, w, b))
 
     return w, b, np.array(cost_history)
