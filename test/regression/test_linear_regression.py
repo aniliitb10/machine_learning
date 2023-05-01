@@ -4,6 +4,7 @@ import numpy as np
 import numpy.testing as npt
 
 import regression.linear_regression as lr
+from sklearn.linear_model import LinearRegression
 
 
 class LinearRegressionTest(unittest.TestCase):
@@ -38,16 +39,20 @@ class LinearRegressionTest(unittest.TestCase):
                       [1416, 3, 2, 40],
                       [852, 2, 1, 35]])
         y = np.array([460, 232, 178])
-        w = np.array([0.39133535, 18.75376741, -53.36032453, -26.42131618])
-        # b = 785.1811367994083
-        initial_w = np.zeros_like(w)
+        initial_w = np.zeros_like(x[0, :])
         initial_b = 0.
         iterations = 100_000  # course uses 1000 iterations, but changed it to get better calculations
         alpha = 5.0e-7
-        w_final, b_final, _ = lr.gradient_descent(x, y, initial_w, initial_b, alpha, iterations)
+        w_final, b_final, _ = lr.gradient_descent(x, y, initial_w, initial_b, alpha, 1, iterations)
         npt.assert_almost_equal(w_final, [0.24224154, 0.28821169, -0.85520022, -1.57622854])
         self.assertAlmostEqual(b_final, -0.04168502)
         self.assertAlmostEqual(lr.compute_cost(x, y, w_final, b_final), 563.25375720)
+        # sk_lr = LinearRegression()
+        # params = sk_lr.fit(x, y)
+        # sample_input = np.random.rand(4)
+        # p1 = sk_lr.predict([sample_input])
+        # p2 = np.dot(sample_input, w_final) + b_final
+        # self.assertAlmostEqual(p1, p2)
 
 
 if __name__ == '__main__':
